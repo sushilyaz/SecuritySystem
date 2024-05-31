@@ -5,5 +5,5 @@ import com.suhoi.dto.UserCreateDto;
 
 public interface UserService {
     void auth(AuthDto dto);
-    void save(UserCreateDto user);
+    void save(UserCreateDto dto);
 }

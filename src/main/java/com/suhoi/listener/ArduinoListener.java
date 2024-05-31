@@ -1,6 +1,7 @@
 package com.suhoi.listener;
 
 import com.fazecast.jSerialComm.SerialPort;
+import com.suhoi.util.UserUtils;
 import com.suhoi.view.ViewFactory;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -29,6 +30,7 @@ public class ArduinoListener extends Task<Void> {
                         // Если пришло сообщение "stop", выполняем другое действие
                         System.out.println("Received 'stop' command.");
                         updateMessage("stop");
+                        UserUtils.setCurrentUser(null);
                         Platform.runLater(ViewFactory::getAuthView);
                     }
                 }

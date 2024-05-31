@@ -2,6 +2,7 @@ package com.suhoi.view;
 
 
 import com.suhoi.controller.AuthController;
+import com.suhoi.controller.CreateUserController;
 import com.suhoi.controller.FileController;
 import com.suhoi.repository.UserRepository;
 import com.suhoi.repository.impl.UserRepositoryImpl;
@@ -10,14 +11,20 @@ import com.suhoi.service.impl.UserServiceImpl;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCombination;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import lombok.Getter;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class ViewFactory {
 
     public static Stage primaryStage;
+
+    @Getter
+    private static Stage createUserStage;
+
 
     private static UserService userService;
 
@@ -52,7 +59,11 @@ public class ViewFactory {
         } else {
             authScene.setRoot(contentAuthView);
         }
+        primaryStage.setFullScreenExitHint("");
+        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.setScene(authScene);
+        primaryStage.setResizable(false);
+        primaryStage.setFullScreen(true);
         primaryStage.show();
     }
 
@@ -72,9 +83,35 @@ public class ViewFactory {
             fileExplorerScene.setRoot(contentFileExplorerView);
         }
         FileController controller = fileFormLoader.getController();
+        controller.initialize();
         controller.setDirectory(path);
         primaryStage.setScene(fileExplorerScene);
+        primaryStage.setFullScreenExitHint("");
+        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+        primaryStage.setResizable(false);
+        primaryStage.setFullScreen(true);
         primaryStage.show();
+    }
+
+    public static void getCreateUserView() {
+        try {
+            FXMLLoader loader = new FXMLLoader(ViewFactory.class.getResource("/createUserView.fxml"));
+            Parent root = loader.load();
+            CreateUserController controller = loader.getController();
+            controller.setUserService(userService);
+            if (createUserStage == null) {
+                createUserStage = new Stage();
+            }
+            controller.setStage(createUserStage);
+            createUserStage.setTitle("Create User");
+            createUserStage.setScene(new Scene(root));
+            createUserStage.setAlwaysOnTop(true);
+            createUserStage.initOwner(primaryStage);
+            createUserStage.initModality(Modality.APPLICATION_MODAL);
+            createUserStage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static void dependencyInjection() {
