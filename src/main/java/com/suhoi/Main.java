@@ -1,7 +1,7 @@
 package com.suhoi;
 
 import com.suhoi.listener.ArduinoListener;
-import com.suhoi.util.SceneUtil;
+import com.suhoi.view.ViewFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -15,10 +15,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        arduinoListener = new ArduinoListener(primaryStage);
+        arduinoListener = new ArduinoListener();
         Thread thread = new Thread(arduinoListener);
         thread.setDaemon(true);
         thread.start();
-        SceneUtil.openScene("/authForm.fxml", primaryStage);
+        ViewFactory.primaryStage = primaryStage;
+        ViewFactory.getAuthView();
     }
 }

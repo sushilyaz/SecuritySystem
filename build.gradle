@@ -34,11 +34,12 @@ ext {
     sqliteVersion = "3.45.1.0"
     junitVersion = "5.10.0"
     lombokVersion = "1.18.30"
+    jbcryptVersion = "0.4"
 }
 
 dependencies {
+    implementation "org.mindrot:jbcrypt:${jbcryptVersion}"
     implementation "com.fazecast:jSerialComm:${jSerialVersion}"
-    implementation "org.xerial:sqlite-jdbc:${sqliteVersion}"
     implementation "org.xerial:sqlite-jdbc:${sqliteVersion}"
 
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
