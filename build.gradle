@@ -38,6 +38,7 @@ ext {
 }
 
 dependencies {
+    implementation 'commons-io:commons-io:2.16.1'
     implementation "org.mindrot:jbcrypt:${jbcryptVersion}"
     implementation "com.fazecast:jSerialComm:${jSerialVersion}"
     implementation "org.xerial:sqlite-jdbc:${sqliteVersion}"

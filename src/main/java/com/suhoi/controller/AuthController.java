@@ -5,6 +5,7 @@ import com.suhoi.dto.AuthDto;
 import com.suhoi.listener.ArduinoListener;
 import com.suhoi.service.UserService;
 import com.suhoi.util.Alerts;
+import com.suhoi.view.ViewFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -57,9 +58,9 @@ public class AuthController {
     @FXML
     public void handleAuthButton() {
         if (passwordField.getText().isEmpty()) {
-            Alerts.showErrorAlert("Пароль не введен");
+            Alerts.showErrorAlert("Пароль не введен", ViewFactory.primaryStage);
         } else if (cardUID == null) {
-            Alerts.showErrorAlert("Карта не вставлена");
+            Alerts.showErrorAlert("Карта не вставлена",  ViewFactory.primaryStage);
         } else {
             String password = passwordField.getText();
             AuthDto authDTO = AuthDto.builder()

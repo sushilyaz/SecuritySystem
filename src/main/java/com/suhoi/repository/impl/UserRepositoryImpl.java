@@ -5,6 +5,7 @@ import com.suhoi.model.User;
 import com.suhoi.repository.UserRepository;
 import com.suhoi.util.Alerts;
 import com.suhoi.util.ConnectionManager;
+import com.suhoi.view.ViewFactory;
 
 import java.sql.*;
 import java.util.Optional;
@@ -25,7 +26,6 @@ public class UserRepositoryImpl implements UserRepository{
             preparedStatement.executeUpdate();
             Alerts.showInfoAlert("Пользователь создан успешно");
         } catch (SQLException e) {
-            Alerts.showErrorAlert(e.getMessage());
             throw new RuntimeException(e);
         }
     }

@@ -27,11 +27,11 @@ public class UserServiceImpl implements UserService {
                 UserUtils.setCurrentUser(user.get());
                 ViewFactory.getFileExplorerView(user.get().getPath());
             } else {
-                Alerts.showErrorAlert("Неправильный пароль");
+                Alerts.showErrorAlert("Неправильный пароль", ViewFactory.primaryStage);
             }
 
         } else {
-            Alerts.showErrorAlert("Пользователь не найден");
+            Alerts.showErrorAlert("Пользователь не найден", ViewFactory.primaryStage);
         }
 
     }
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     public void save(UserCreateDto dto) {
         Optional<User> user = userRepository.findByCardUid(dto.getCardUid());
         if (user.isPresent()) {
-            Alerts.showErrorAlert("Пользователь уже существует");
+            Alerts.showErrorAlert("Пользователь уже существует", ViewFactory.createUserStage);
         } else {
             String hashpw = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
             User build = User.builder()

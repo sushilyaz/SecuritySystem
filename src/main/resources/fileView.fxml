@@ -5,5 +5,7 @@
 
 <VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.suhoi.controller.FileController">
     <Button fx:id="addUserButton" text="Добавить пользователя" visible="false" onAction="#handleAddUser"/>
-    <ListView fx:id="fileListView" />
+    <Button text="Создать новую папку" onAction="#handleCreateNewFolder"/>
+    <Button text="Создать новый файл" onAction="#handleCreateNewFile"/>
+    <ListView fx:id="fileListView" onMouseClicked="#handleFileClick"/>
 </VBox>

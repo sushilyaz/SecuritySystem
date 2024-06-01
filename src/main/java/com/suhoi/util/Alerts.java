@@ -8,11 +8,10 @@ import javafx.stage.Window;
 
 public class Alerts {
 
-    public static void showErrorAlert(String message) {
+    public static void showErrorAlert(String message, Stage primaryStage) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
+        alert.initModality(Modality.WINDOW_MODAL);
+        alert.initOwner(primaryStage);
         alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(message);
@@ -25,7 +24,7 @@ public class Alerts {
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         alert.setOnCloseRequest(event -> {
-            ViewFactory.getCreateUserStage().close();
+            ViewFactory.createUserStage.close();
         });
         alert.setTitle("SUCCESS");
         alert.setHeaderText(null);
