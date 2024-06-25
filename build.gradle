@@ -24,6 +24,10 @@ tasks.withType(Jar) {
     from {
         configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
     }
+    // Добавляем DLL файл из корня проекта в JAR
+    from('.') {
+        include 'FileAccessControlNative.dll'
+    }
 }
 
 java {
