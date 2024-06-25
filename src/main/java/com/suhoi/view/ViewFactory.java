@@ -3,13 +3,14 @@ package com.suhoi.view;
 
 import com.suhoi.controller.AuthController;
 import com.suhoi.controller.CreateUserController;
-import com.suhoi.controller.FileController;
+import com.suhoi.model.Role;
 import com.suhoi.repository.UserRepository;
 import com.suhoi.repository.impl.UserRepositoryImpl;
 import com.suhoi.service.UserService;
 import com.suhoi.service.impl.UserServiceImpl;
 import com.suhoi.util.Alerts;
 import com.suhoi.util.FileView;
+import com.suhoi.util.UserUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -80,10 +81,10 @@ public class ViewFactory {
             authScene.setRoot(contentAuthView);
         }
         primaryStage.setFullScreenExitHint("");
-        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+//        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.setScene(authScene);
         primaryStage.setResizable(false);
-        primaryStage.setFullScreen(true);
+//        primaryStage.setFullScreen(true);
         primaryStage.show();
     }
 
@@ -113,9 +114,9 @@ public class ViewFactory {
         });
         primaryStage.setScene(scene);
         primaryStage.setFullScreenExitHint("");
-        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+//        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.setResizable(false);
-        primaryStage.setFullScreen(true);
+//        primaryStage.setFullScreen(true);
         primaryStage.show();
     }
 
@@ -127,13 +128,13 @@ public class ViewFactory {
             controller.setUserService(userService);
             if (createUserStage == null) {
                 createUserStage = new Stage();
+                createUserStage.initOwner(primaryStage);
+                createUserStage.initModality(Modality.APPLICATION_MODAL);
             }
             controller.setStage(createUserStage);
-            createUserStage.setTitle("Create User");
+            createUserStage.setTitle("Создание нового пользователя");
             createUserStage.setScene(new Scene(root));
             createUserStage.setAlwaysOnTop(true);
-            createUserStage.initOwner(primaryStage);
-            createUserStage.initModality(Modality.APPLICATION_MODAL);
             createUserStage.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
@@ -146,31 +147,37 @@ public class ViewFactory {
     }
 
     private static MenuBar getMenuBar() {
-        Menu fileMenu = new Menu("File");
+        Menu fileMenu = new Menu("Файл");
 
         // Create file menu
-        MenuItem newFile = new MenuItem("New File");
+        MenuItem newFile = new MenuItem("Новый файл");
         newFile.setOnAction(e -> mFileView.createFile());
         newFile.setAccelerator(SHORTCUT_NEW_FILE);
 
-        MenuItem newFolder = new MenuItem("New Folder     ");
+        MenuItem newFolder = new MenuItem("Новая папка");
         newFolder.setOnAction(e -> mFileView.createDirectory());
         newFolder.setAccelerator(SHORTCUT_NEW_DIRECTORY);
 
-        MenuItem renameItem = new MenuItem("Rename");
+        MenuItem renameItem = new MenuItem("Переименовать");
         renameItem.setOnAction(e -> mFileView.rename());
         renameItem.setAccelerator(SHORTCUT_RENAME);
 
-        MenuItem deleteItem = new MenuItem("Delete");
+        MenuItem deleteItem = new MenuItem("Удалить");
         deleteItem.setOnAction(e -> mFileView.delete());
         deleteItem.setAccelerator(SHORTCUT_DELETE);
 
-        fileMenu.getItems().addAll(newFile, newFolder, renameItem, deleteItem);
+        MenuItem addNewUserItem = new MenuItem("Добавить нового пользователя");
+        if (!UserUtils.getCurrentUser().getRole().equals(Role.ADMIN)) {
+            addNewUserItem.setVisible(false);
+        }
+        addNewUserItem.setOnAction(e -> ViewFactory.getCreateUserView());
+
+        fileMenu.getItems().addAll(newFile, newFolder, renameItem, deleteItem, addNewUserItem);
 
         //Create helpMenu
         Menu helpMenu = new Menu("Help");
         MenuItem aboutMenuItem = new MenuItem("About");
-        aboutMenuItem.setOnAction(e -> Alerts.showInfoAlert("File Manager. \n Copyright © 2024 by Ilya Sushentsov")
+        aboutMenuItem.setOnAction(e -> Alerts.showInfoAlert("Security File Manager. \n Copyright © 2024 by Ilya Sushentsov")
         );
         helpMenu.getItems().addAll(aboutMenuItem);
 
@@ -178,10 +185,10 @@ public class ViewFactory {
     }
 
     private static ToolBar getToolBar() {
-        Label labelCopy = new Label("F5 Copy");
+        Label labelCopy = new Label("F5 Копировать");
         labelCopy.setOnMouseClicked(e -> mFileView.copy());
 
-        Label labelMove = new Label("F6 Move");
+        Label labelMove = new Label("F6 Переместить");
         labelMove.setOnMouseClicked(e -> mFileView.move());
 
         return new ToolBar(labelCopy, new Separator(), labelMove);

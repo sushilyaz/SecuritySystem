@@ -4,16 +4,13 @@ import com.suhoi.Main;
 import com.suhoi.dto.UserCreateDto;
 import com.suhoi.listener.ArduinoListener;
 import com.suhoi.service.UserService;
+import com.suhoi.util.Alerts;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import javafx.scene.paint.Color;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import lombok.*;
 
 import java.io.File;
@@ -44,6 +41,7 @@ public class CreateUserController {
     private Label pathError;
 
     @Setter
+    @Getter
     private Stage stage;
     private boolean isCardRead = false;
 
@@ -89,11 +87,9 @@ public class CreateUserController {
                     .build();
             userService.save(dto);
         } else if (!isCardRead) {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Validation Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Карта не считана. Пожалуйста, вставьте карту.");
-            alert.showAndWait();
+            Alerts.showErrorAlert("Карта не вставлена", getStage());
+        } else {
+            Alerts.showErrorAlert("Заполните все поля", getStage());
         }
     }
 
@@ -122,10 +118,6 @@ public class CreateUserController {
         }
 
         return isValid;
-    }
-
-    public void onCardRead() {
-
     }
 }
 

@@ -6,11 +6,20 @@ import com.suhoi.view.ViewFactory;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
+import java.io.OutputStream;
+import java.io.PrintWriter;
+
 public class ArduinoListener extends Task<Void> {
+
+    private static String SERIAL_PORT = "COM3";
+
+    public ArduinoListener(String serialPort) {
+        SERIAL_PORT = serialPort;
+    }
 
     @Override
     protected Void call() throws Exception {
-        SerialPort serialPort = SerialPort.getCommPort("COM3");
+        SerialPort serialPort = SerialPort.getCommPort(SERIAL_PORT);
         serialPort.setComPortParameters(9600, 8, 1, 0);
         serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, 100, 0);
         serialPort.openPort();
@@ -26,12 +35,14 @@ public class ArduinoListener extends Task<Void> {
                         // Если пришло сообщение в виде 26-значного номера, выполняем одно действие
                         System.out.println("Received number: " + message.trim());
                         updateMessage(message);
-                    } else if (message.trim().equalsIgnoreCase("stop")) {
+                    } else if (message.trim().contains("stop")) {
                         // Если пришло сообщение "stop", выполняем другое действие
                         System.out.println("Received 'stop' command.");
                         updateMessage("stop");
                         UserUtils.setCurrentUser(null);
                         Platform.runLater(ViewFactory::getAuthView);
+                    } else {
+                        System.out.println("Received '" + message + "' command.");
                     }
                 }
             }
@@ -40,5 +51,4 @@ public class ArduinoListener extends Task<Void> {
         }
         return null;
     }
-
 }

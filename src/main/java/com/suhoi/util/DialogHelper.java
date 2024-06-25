@@ -1,5 +1,6 @@
 package com.suhoi.util;
 
+import com.suhoi.view.ViewFactory;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
@@ -7,6 +8,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.PrintWriter;
@@ -88,7 +90,8 @@ public class DialogHelper {
         dialog.setContentText(content);
 
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-
+        stage.initOwner(ViewFactory.primaryStage);
+        stage.initModality(Modality.APPLICATION_MODAL);
         Optional<String> result = dialog.showAndWait();
         return result.isPresent() ? result.get() : null;
     }
@@ -99,6 +102,6 @@ public class DialogHelper {
         e.printStackTrace(printWriter);
         String exceptionText = printWriter.toString();
 
-        showExpandableAlert(AlertType.ERROR, "Dolphin Explorer", "Something went wrong", e.toString(), exceptionText);
+        showExpandableAlert(AlertType.ERROR, "File Manager", "Something went wrong", e.toString(), exceptionText);
     }
 }

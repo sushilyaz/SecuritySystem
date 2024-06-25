@@ -7,6 +7,7 @@ import com.suhoi.model.User;
 import com.suhoi.repository.UserRepository;
 import com.suhoi.service.UserService;
 import com.suhoi.util.Alerts;
+import com.suhoi.util.FileAccessManager;
 import com.suhoi.util.UserUtils;
 import com.suhoi.view.ViewFactory;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,11 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()) {
             if (BCrypt.checkpw(dto.getPassword(), user.get().getPasswordDigest())) {
                 UserUtils.setCurrentUser(user.get());
+                boolean accessGranted = FileAccessManager.grantAccess(user.get().getPath());
+                if (accessGranted) {
+                    System.err.println("Failed to grant access to user's directory.");
+                    System.exit(1);
+                }
                 ViewFactory.getFileExplorerView(user.get().getPath());
             } else {
                 Alerts.showErrorAlert("Неправильный пароль", ViewFactory.primaryStage);

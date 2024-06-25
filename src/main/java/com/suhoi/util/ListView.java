@@ -1,5 +1,6 @@
 package com.suhoi.util;
 
+import com.suhoi.view.ViewFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListCell;
@@ -11,18 +12,25 @@ import javafx.util.Callback;
 import java.awt.*;
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class ListView extends javafx.scene.control.ListView<String> {
     private File mDirectory;
+
     private TextField mTextField;
+
     private ObservableList<String> mChildrenList;
 
+    private String userDirectory;
+
     private WatchServiceHelper mWatchServiceHelper;
+
     public ListView(String path) {
         super();
+        userDirectory = path;
         getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         mDirectory = new File(path);
 
@@ -35,9 +43,12 @@ public class ListView extends javafx.scene.control.ListView<String> {
         setOnKeyPressed(key -> {
             switch (key.getCode()) {
                 case ENTER:
-                    if (isFocused()) navigate(getSelectionModel().getSelectedItem());
+                    if (isFocused()) {
+                        navigate(getSelectionModel().getSelectedItem());
+                    }
                     break;
                 case BACK_SPACE:
+
                     back();
                     break;
             }
@@ -57,7 +68,12 @@ public class ListView extends javafx.scene.control.ListView<String> {
         refresh();
     }
 
+
     public void refresh() {
+        if (!isWithinUserDirectory(Paths.get(mDirectory.getAbsolutePath()))) {
+            Alerts.showErrorAlert("Отказано в доступе", ViewFactory.primaryStage);
+            return;
+        }
         showList(getCurrentFilesList());
         mTextField.setText(mDirectory.getAbsolutePath());
         mWatchServiceHelper.changeObservableDirectory(mDirectory.toPath());
@@ -136,6 +152,10 @@ public class ListView extends javafx.scene.control.ListView<String> {
 
     private void navigate(String name) {
         String selectedPath = mDirectory.getAbsolutePath() + File.separator + name;
+        if (!isWithinUserDirectory(Paths.get(selectedPath))) {
+            Alerts.showErrorAlert("Отказано в доступе", ViewFactory.primaryStage);
+            return;
+        }
         File selectedFile = new File(selectedPath);
         if (selectedFile.isDirectory()) {
             mDirectory = selectedFile;
@@ -151,13 +171,19 @@ public class ListView extends javafx.scene.control.ListView<String> {
 
     private void back() {
         File parent = mDirectory.getParentFile();
-        if (parent != null) {
-            mDirectory = parent;
-            if (mDirectory.exists()) {
-                refresh();
-            } else {
-                back();
-            }
+        if (!isWithinUserDirectory(Paths.get(parent.getAbsolutePath()))) {
+            Alerts.showErrorAlert("Отказано в доступе", ViewFactory.primaryStage);
+            return;
         }
+        mDirectory = parent;
+        if (mDirectory.exists()) {
+            refresh();
+        } else {
+            back();
+        }
+    }
+
+    private boolean isWithinUserDirectory(Path path) {
+        return path.startsWith(userDirectory);
     }
 }
