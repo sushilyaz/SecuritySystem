@@ -27,6 +27,7 @@ public class ArduinoListener extends Task<Void> {
         try {
             while (true) {
                 if (serialPort.bytesAvailable() > 0) {
+                    Thread.sleep(1000);
                     byte[] buffer = new byte[serialPort.bytesAvailable()];
                     serialPort.readBytes(buffer, buffer.length);
                     String message = new String(buffer);

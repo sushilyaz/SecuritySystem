@@ -2,7 +2,7 @@ package com.suhoi;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.suhoi.listener.ArduinoListener;
-import com.suhoi.util.FileAccessManager;
+import com.suhoi.util.FileAccessControl;
 import com.suhoi.view.ViewFactory;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -36,8 +36,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws InterruptedException {
-        boolean accessRestricted = FileAccessManager.restrictAccess();
-        if (accessRestricted) {
+        boolean accessRestricted = FileAccessControl.blockAccess();
+        if (!accessRestricted) {
             System.out.println("Failed to restrict access to files.");
             System.exit(1);
         }
@@ -126,8 +126,8 @@ public class Main extends Application {
         }
         primaryStage.setOnCloseRequest(event -> {
             // Восстанавливаем доступ ко всем файлам при закрытии приложения
-            boolean accessRestored = FileAccessManager.restoreAccess();
-            if (accessRestored) {
+            boolean accessRestored = FileAccessControl.allowAccess();
+            if (!accessRestored) {
                 System.err.println("Failed to restore access to files.");
             }
         });
