@@ -14,7 +14,10 @@ import javafx.stage.Stage;
 import lombok.*;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CreateUserController {
 
@@ -79,10 +82,15 @@ public class CreateUserController {
             String password = passwordField.getText();
             String path = pathField.getText();
 
+            List<String> paths = Arrays.stream(path.split(";"))
+                    .map(String::trim)
+                    .filter(p -> !p.isEmpty())
+                    .collect(Collectors.toList());
+
             UserCreateDto dto = UserCreateDto.builder()
                     .username(username)
                     .password(password)
-                    .path(path)
+                    .path(paths)
                     .cardUid(cardUID)
                     .build();
             userService.save(dto);

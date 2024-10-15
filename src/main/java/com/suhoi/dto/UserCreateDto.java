@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -12,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class UserCreateDto {
     private String username;
     private String password;
-    private String path;
+    private List<String> path;
     private String cardUid;
 }

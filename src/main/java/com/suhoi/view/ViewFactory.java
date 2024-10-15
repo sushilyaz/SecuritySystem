@@ -4,13 +4,16 @@ package com.suhoi.view;
 import com.suhoi.controller.AuthController;
 import com.suhoi.controller.CreateUserController;
 import com.suhoi.model.Role;
+import com.suhoi.repository.DirectoryRepository;
 import com.suhoi.repository.UserRepository;
+import com.suhoi.repository.impl.DirectoryRepositoryImpl;
 import com.suhoi.repository.impl.UserRepositoryImpl;
 import com.suhoi.service.UserService;
 import com.suhoi.service.impl.UserServiceImpl;
 import com.suhoi.util.Alerts;
 import com.suhoi.util.FileView;
 import com.suhoi.util.UserUtils;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -26,6 +29,7 @@ import javafx.stage.Stage;
 import lombok.Getter;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ViewFactory {
 
@@ -88,13 +92,43 @@ public class ViewFactory {
         primaryStage.show();
     }
 
-    public static void getFileExplorerView(String path) {
+    public static void getFileExplorerView(List<String> availableDirectories) {
+        VBox root = new VBox();
+
+        // Создание ListView для отображения списка доступных директорий
+        ListView<String> directoryListView = new ListView<>();
+        directoryListView.setItems(FXCollections.observableArrayList(availableDirectories));
+        // Обработка выбора директории
+        directoryListView.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                String selectedDirectory = directoryListView.getSelectionModel().getSelectedItem();
+                if (selectedDirectory != null) {
+                    // Когда пользователь выберет директорию, откроем ее во FileView
+                    openDirectory(selectedDirectory);
+                }
+            }
+        });
+
+        root.getChildren().addAll(directoryListView);
+
+        Scene scene = new Scene(root, 800, 600); // Размер окна по умолчанию
+        primaryStage.setScene(scene);
+        primaryStage.setFullScreenExitHint("");
+        primaryStage.setResizable(false);
+        primaryStage.show();
+
+
+    }
+
+    public static void openDirectory(String path) {
         VBox root = new VBox();
         mFileView = new FileView(path);
         VBox.setVgrow(mFileView, Priority.ALWAYS);
         root.getChildren().addAll(getMenuBar(), mFileView, getToolBar());
+        primaryStage.setFullScreenExitHint("");
+//        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+//        primaryStage.setFullScreen(true);
         Scene scene = new Scene(root);
-
         scene.addEventFilter(KeyEvent.KEY_RELEASED, e -> {
             if (SHORTCUT_DELETE.match(e)) {
                 mFileView.delete();
@@ -113,10 +147,7 @@ public class ViewFactory {
             }
         });
         primaryStage.setScene(scene);
-        primaryStage.setFullScreenExitHint("");
-//        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.setResizable(false);
-//        primaryStage.setFullScreen(true);
         primaryStage.show();
     }
 
@@ -143,7 +174,8 @@ public class ViewFactory {
 
     private static void dependencyInjection() {
         UserRepository userRepository = new UserRepositoryImpl();
-        userService = new UserServiceImpl(userRepository);
+        DirectoryRepository directoryRepository = new DirectoryRepositoryImpl();
+        userService = new UserServiceImpl(userRepository, directoryRepository);
     }
 
     private static MenuBar getMenuBar() {

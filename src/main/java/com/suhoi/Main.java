@@ -44,6 +44,13 @@ public class Main extends Application {
         this.primaryStage = primaryStage;
         Stage stage = new Stage();
 
+        stage.setOnCloseRequest(event -> {
+            // Восстанавливаем доступ ко всем файлам при закрытии приложения
+            boolean accessRestored = FileAccessControl.allowAccess();
+            if (!accessRestored) {
+                System.err.println("Failed to restore access to files.");
+            }
+        });
         ObservableList<String> portNames = FXCollections.observableArrayList();
         SerialPort[] ports = SerialPort.getCommPorts();
         for (SerialPort port : ports) {
