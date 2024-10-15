@@ -104,7 +104,7 @@ public class ViewFactory {
                 String selectedDirectory = directoryListView.getSelectionModel().getSelectedItem();
                 if (selectedDirectory != null) {
                     // Когда пользователь выберет директорию, откроем ее во FileView
-                    openDirectory(selectedDirectory);
+                    openDirectory(availableDirectories);
                 }
             }
         });
@@ -120,7 +120,7 @@ public class ViewFactory {
 
     }
 
-    public static void openDirectory(String path) {
+    public static void openDirectory(List<String> path) {
         VBox root = new VBox();
         mFileView = new FileView(path);
         VBox.setVgrow(mFileView, Priority.ALWAYS);

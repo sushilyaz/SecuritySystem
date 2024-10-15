@@ -1,5 +1,6 @@
 package com.suhoi.util;
 
+import com.suhoi.view.ViewFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -20,9 +21,13 @@ public class FileView extends HBox {
     private ListView mLeftPane;
     private ListView mRightPane;
 
-    public FileView(String path) {
+    public FileView(List<String> path) {
+        if (path == null || path.isEmpty()) {
+            Alerts.showErrorAlert("У пользователя нет разрешенных директорий", ViewFactory.primaryStage);
+        }
         mLeftPane = new ListView(path);
         mRightPane = new ListView(path);
+
 
         mLeftPane.getTextField().setOnAction(e -> onTextEntered(mLeftPane.getTextField()));
         mRightPane.getTextField().setOnAction(e -> onTextEntered(mRightPane.getTextField()));
@@ -36,6 +41,7 @@ public class FileView extends HBox {
         HBox.setHgrow(rightView, Priority.ALWAYS);
         getChildren().addAll(leftView, rightView);
     }
+
     public void copy() {
         if (mLeftPane.isFocused()) {
             List<Path> source = mLeftPane.getSelection();

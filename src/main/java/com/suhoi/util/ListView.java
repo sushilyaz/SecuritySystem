@@ -24,15 +24,15 @@ public class ListView extends javafx.scene.control.ListView<String> {
 
     private ObservableList<String> mChildrenList;
 
-    private String userDirectory;
+    private List<String> userDirectory;
 
     private WatchServiceHelper mWatchServiceHelper;
 
-    public ListView(String path) {
+    public ListView(List<String> path) {
         super();
         userDirectory = path;
         getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        mDirectory = new File(path);
+        mDirectory = new File(path.get(0));
 
         mChildrenList = FXCollections.observableArrayList();
         setItems(mChildrenList);
@@ -184,6 +184,11 @@ public class ListView extends javafx.scene.control.ListView<String> {
     }
 
     private boolean isWithinUserDirectory(Path path) {
-        return path.startsWith(userDirectory);
+        for (String directory : userDirectory) {
+            if (path.startsWith(directory)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
